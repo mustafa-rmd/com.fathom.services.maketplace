@@ -1,0 +1,30 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'main'
+  release:
+    types: [published]
+
+jobs:
+  publish-latest:
+    if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
+    uses: fathom-io/gh-workflows/.github/workflows/java-publish.yaml@main
+    with:
+      ARTIFACT_ID: 'marketplace'
+      IMAGE_NAME: 'marketplace'
+      TAG: 'latest'
+      JAVA_VERSION: '17'
+    secrets: inherit
+
+  publish-stable:
+    if: ${{ github.event_name == 'release' }}
+    uses: fathom-io/gh-workflows/.github/workflows/java-publish.yaml@main
+    with:
+      ARTIFACT_ID: 'marketplace'
+      IMAGE_NAME: 'marketplace'
+      TAG: 'stable'
+      JAVA_VERSION: '17'
+    secrets: inherit

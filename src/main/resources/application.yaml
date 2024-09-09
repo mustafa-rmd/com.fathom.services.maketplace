@@ -1,0 +1,84 @@
+server:
+  port: ${MARKETPLACE_SERVICE_PORT:8077}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    root: INFO
+    org:
+      apache:
+        kafka: OFF
+      springframework:
+        boot:
+          autoconfigure:
+            web:
+              reactive: WARN
+        cloud:
+          gateway: WARN
+        hibernate:
+          SQL: DEBUG
+          type:
+            descriptor:
+              sql:
+                BasicBinder: INFO
+spring:
+  application:
+    name: ${MARKETPLACE_SERVICE_NAME:marketplace}
+  flyway:
+    enabled: ${FLYWAY_MIGRATION_ENABLED:false}
+    locations: classpath:db/migration
+    url: ${spring.datasource.url}
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:fathom}?currentSchema=${AM_SCHEMA:marketplace}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:postgres}
+  jpa:
+    open-in-view: false
+    show-sql: ${JPA_SHOW_SQL:true}
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+    hibernate:
+      ddl-auto:  ${JPA_DDL_AUTO:update}
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
+    kubernetes:
+      loadbalancer:
+        mode: service
+      discovery:
+        all-namespaces: true
+  sql.init.mode: always
+  sql.init.schema-locations: classpath:schema-postgres.sql
+
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: true
+        isolation:
+          thread:
+            timeoutInMilliseconds: 10000
+      circuitBreaker:
+        requestVolumeThreshold: 5
+        errorThresholdPercentage: 50
+        sleepWindowInMilliseconds: 10000
+      metrics:
+        rollingStats:
+          timeInMilliseconds: 10000
+
+fathom:
+  persistent:
+    events:
+      organization:
+        kafka-topic-name: ${PERSISTENT_EVENTS_ORGANIZATION_KAFKA_TOPIC_NAME:fathom.organization.persistent.events}

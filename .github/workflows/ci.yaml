@@ -1,0 +1,16 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - 'main'
+
+jobs:
+  build-and-test:
+    uses: fathom-io/gh-workflows/.github/workflows/java-ci.yaml@main
+    with:
+      ARTIFACT_ID: 'marketplace'
+      CONTINUE_ON_TEST_FAILURE: true
+      JAVA_VERSION: '17'
+    secrets: inherit

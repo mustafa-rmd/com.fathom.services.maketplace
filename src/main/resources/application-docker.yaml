@@ -1,0 +1,13 @@
+spring:
+    loadbalancer:
+      ribbon:
+        enabled: false
+    kubernetes:
+      enabled: false
+      loadbalancer:
+        enabled: false
+      discovery:
+        enabled: false
+feign:
+  hystrix:
+    enabled: false
